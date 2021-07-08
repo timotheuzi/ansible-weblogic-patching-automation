@@ -1,0 +1,21 @@
+---
+- name: Patch Oracle domain
+  hosts: all
+  vars_files:
+    # User defined variables for infrastructure
+    - infra-vars.yml
+    - secrets.yml
+  roles:
+    - role: fmw-dlpatch
+    - role: fmw-wls-patch
+      when: target_software == "WLS" 
+    #- role: fmw-ucm-patch
+    #- role: fmw-soa-patch   
+  become: yes
+  #environment:
+  #  JAVA_HOME: "{{ jdk_folder }}"
+  #  ANT_HOME: "{{ ant_home }}"
+  #  PATH: "{{ env_path }}/bin:{{ ant_home }}/bin:{{ ant_home }}/lib" 
+  #become_user: "{{oracle_user}}"
+  #pre_tasks:
+   #remote_user: "{{oracle_user}}"

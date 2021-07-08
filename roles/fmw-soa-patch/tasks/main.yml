@@ -1,0 +1,28 @@
+################################################################################
+# ==> Main Tasks for fmw-soa-patch Role
+# ==> Patches new Domain
+# ==> Compatible with 11g
+################################################################################
+# ==> patch new domain
+
+###### SOA ########
+- name: Run opatch to apply patch {{ patch_installation_archive_2 }} in SOA home
+  #when: target_software  == "SOA"
+  command: "./opatch apply {{ patch_base }}/{{ patch_installation_archive_1 }} -jre {{ jdk_folder }}"
+  args:
+    chdir: "{{ middleware_home }}/Oracle_SOA1/OPatch"
+  environment:
+    ORACLE_HOME: "{{ middleware_home }}/Oracle_SOA1"
+    PATH: "{{ env_path }}/bin:{{ ant_home }}/bin:{{ ant_home }}/lib"
+
+- name: Run opatch to apply patch {{ patch_installation_archive_3 }} in oracle common
+  #when: target_software  == "SOA"
+  command: "./opatch apply {{ patch_base }}/{{ patch_installation_archive_1 }} -jre {{ jdk_folder }}"
+  args:
+    chdir: "{{ middleware_home }}/oracle_common/OPatch"
+  environment:
+    ORACLE_HOME: "{{ middleware_home }}/oracle_common"
+
+- name: Changing permissions of "{{ oracle_base }}"
+  become: yes
+  file: path="{{ oracle_base }}" owner={{ oracle_user }} group={{ oracle_group }} mode=0770 recurse=yes  

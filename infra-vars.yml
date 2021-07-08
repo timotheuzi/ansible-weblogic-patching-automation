@@ -1,0 +1,41 @@
+# Oracle os user and group
+ansible_user: 'oracle'
+ansible_group: 'oinstall'
+
+# JDK location 
+jdk_folder: '{{ oracle_base }}/jdk'
+
+## patch file(s)
+patch_installation_archive_wls: 'p28168795_1036_Generic.zip'
+patch_installation_archive_ucm: 'p22245024_111190_Generic.zip'
+patch_installation_archive_soa: 'p22245024_111190_Generic.zip'
+target_software: WLS
+patch_id_remove: GFWX
+patch_id_add: LMQD
+remove_patch: false
+download_patch: false
+bsu_sh: bsu.sh
+
+# Common paths
+oracle_base: /u01/oracle
+dommain_user_projects: '{{ middleware_home }}/user_projects/domains/{{ domain_name }}'
+middleware_home: '{{ oracle_base }}/Middleware_Home'
+middleware_common_home: '{{ middleware_home }}/oracle_common'
+middleware_bsu: '{{ middleware_home }}/utils/bsu'
+middleware_cache_dir: '{{ middleware_bsu }}/cache_dir'
+domains_home: '{{ oracle_base }}/config/Domains'
+applications_home: '{{ oracle_base }}/config/applications'
+mw_installer_folder: '{{ oracle_base }}/installer'
+domain_home: '{{ domains_home }}/{{ domain_name }}'
+nodemanager_home: '{{ weblogic_home }}/common/nodemanager'
+weblogic_home: '{{ middleware_home }}/wlserver_10.3'
+patch_download: 'https://drive.google.com/open?id=1BuR8sF19EnM6aQsBB1mbqEQV4mQn7QtO'
+install_file: 'p28168795_1036_Generic.zip'
+patch_base: '{{ oracle_base }}/patch'
+local_patch_file: p28168795_1036_Generic.zip
+
+#additional packages
+packages_list:
+  - 'wget' 
+  - 'unzip'
+  - 'perl' 

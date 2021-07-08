@@ -1,0 +1,49 @@
+################################################################################
+# ==> Main Tasks for fmw-dlpatch Role
+# ==> Downloads new patch from Gdrive
+# ==> 
+################################################################################
+# ==> set up patch location
+
+- name: Install required libraries
+  yum: name={{ item }} state=present
+  with_items: "{{ packages_list }}"
+  
+- name: Create {{ patch_base }} directory
+  file: state=directory path={{ patch_base }} owner={{ ansible_user }}
+  
+- name: Create {{ middleware_cache_dir }} directory
+  file: state=directory path={{ middleware_cache_dir }} owner={{ ansible_user }} mode=0755
+
+#### copy patch from templates #####
+- name: Copy {{ patch_installation_archive_wls }} archive to host
+  when: download_patch  == false
+  copy: src={{ patch_installation_archive_wls }} dest={{ middleware_cache_dir }} 
+  args:
+    force: no
+    mode: 0755
+
+#### download patch from gDrive ########
+- name: Copy "gdown" script to {{ middleware_cache_dir }}
+  when: download_patch  == true
+  template: src=gdown.pl dest={{ middleware_cache_dir }} owner={{ ansible_user }} mode=0755
+  
+- name: Download {{ middleware_cache_dir }} archive
+  when: download_patch  == true
+  command: "perl {{ middleware_cache_dir }}/gdown.pl {{ patch_download }} {{ middleware_cache_dir }}/{{ install_file }}"
+  args:
+      chdir: "{{ middleware_cache_dir }}" 
+      creates: "{{ middleware_cache_dir }}/{{ patch_installation_archive_wls }}"
+  become_user: "{{ oracle_user }}"
+
+#- name: Changing permissionissions of "{{ inspyrus_install }}"
+#  file: path="{{ inspyrus_install }}" owner={{ oracle_user }} mode=0770 recurse=yes
+#  become_user: "{{ oracle_user }}"
+  
+- name: Extract {{ patch_installation_archive_wls }} into {{ middleware_cache_dir }}
+  unarchive:
+    src: "{{ middleware_cache_dir }}/{{ patch_installation_archive_wls }}"
+    dest: "{{ middleware_cache_dir }}"
+    remote_src: yes
+    mode: 0755
+  #become_user: "{{ oracle_user }}"

@@ -1,0 +1,30 @@
+################################################################################
+# ==> Main Tasks for fmw-wls-patch Role
+# ==> Patches new Domain 
+# ==> Compatible with 11g
+################################################################################
+
+###### WLS ########
+
+- name: Copy {{ bsu_sh }} archive to host
+  when: download_patch  == false
+  copy: src={{ bsu_sh }} dest={{ middleware_bsu }} 
+  args:
+    force: yes
+    mode: 0755
+    
+- name: Run BSU to remove patch {{ patch_id_remove }} for weblogic
+  when: remove_patch == true
+  command: "./bsu.sh -remove -patchlist={{ patch_id_remove }} -prod_dir={{ weblogic_home }} -log={{ patch_base }}/patch.log"
+  args:
+    chdir: "{{ middleware_home }}/utils/bsu"
+  environment:
+    ORACLE_HOME: "{{ middleware_home }}/oracle_common"
+    
+- name: Run BSU to apply patch {{ patch_id_add }} for weblogic
+  #when: target_software  == "WLS"
+  command: "./bsu.sh -install -patch_download_dir={{ middleware_cache_dir }} -patchlist={{ patch_id_add }} -prod_dir={{ weblogic_home }}"
+  args:
+    chdir: "{{ middleware_home }}/utils/bsu"
+  environment:
+    ORACLE_HOME: "{{ middleware_home }}/oracle_common"

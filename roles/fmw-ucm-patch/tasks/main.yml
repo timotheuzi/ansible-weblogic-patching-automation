@@ -1,0 +1,19 @@
+################################################################################
+# ==> Main Tasks for fmw-ucm-patch Role
+# ==> Patches new Domain 
+# ==> Compatible with 11g
+################################################################################
+# ==> patch new domain
+
+###### UCM ########
+- name: Run opatch to apply patch {{ patch_installation_archive }} in Oracle_UCM1
+  #when: target_software  == "UCM"
+  command: "./opatch apply {{ patch_base }}/{{ patch_installation_archive_1 }}"
+  args:
+    chdir: "{{ middleware_home }}/Oracle_UCM1/OPatch"
+  environment:
+    ORACLE_HOME: "{{ middleware_home }}/Oracle_UCM1"
+
+- name: Changing permissions of "{{ oracle_base }}"
+  become: yes
+  file: path="{{ oracle_base }}" owner={{ oracle_user }} group={{ oracle_group }} mode=0770 recurse=yes  
